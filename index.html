@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 17: React Live Search Filter</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body class="bg-blue-100 flex justify-center p-4 sm:p-8">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- Core React Concepts for Today ---
+        // 1. Controlled Components: The search input's value is controlled by React state.
+        // 2. Filtering Data: Creating a new, filtered array based on a search term without modifying the original data.
+        // 3. The `useEffect` Hook: A hook for performing "side effects" in your components. Side effects are actions that interact with the outside world, like fetching data or, in our case, logging to the console when state changes.
+
+        // --- Mock Data ---
+        const countryData = [
+            'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Argentina', 'Australia', 'Austria', 'Bangladesh', 'Belarus',
+            'Belgium', 'Bolivia', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'China', 'Colombia', 'Croatia', 'Cuba', 'Cyprus',
+            'Czech Republic', 'Denmark', 'Dominica', 'Egypt', 'Estonia', 'Finland', 'France', 'Germany', 'Ghana', 'Greece', 'Hungary',
+            'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Kenya',
+            'Luxembourg', 'Madagascar', 'Malaysia', 'Maldives', 'Mexico', 'Monaco', 'Morocco', 'Netherlands', 'New Zealand',
+            'Nigeria', 'Norway', 'Pakistan', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia',
+            'Saudi Arabia', 'Serbia', 'Singapore', 'South Africa', 'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Thailand',
+            'Turkey', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+        ];
+
+        const ListItem = ({ text }) => (
+            <div className="bg-white p-4 rounded-lg shadow-sm flex items-center">
+                <span className="text-gray-700">{text}</span>
+            </div>
+        );
+
+        const App = () => {
+            const [searchTerm, setSearchTerm] = React.useState('');
+            
+            // --- The `useEffect` Hook ---
+            // This function will run AFTER the component renders.
+            // The `[searchTerm]` part is the "dependency array". It tells React to
+            // re-run this effect ONLY when the `searchTerm` state changes.
+            React.useEffect(() => {
+                // This is a "side effect".
+                console.log(`Searching for: ${searchTerm}`);
+            }, [searchTerm]);
+
+
+            // --- Filtering Logic ---
+            const filteredCountries = countryData.filter(country =>
+                country.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            return (
+                <div className="w-full max-w-2xl">
+                    <div className="bg-white rounded-xl shadow-2xl p-6">
+                        <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">Live Country Filter</h1>
+                        <p className="text-center text-gray-500 mb-6">Start typing to filter the list in real-time.</p>
+                        
+                        {/* Controlled Input Component */}
+                        <div className="relative mb-6">
+                            <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input
+                                type="text"
+                                placeholder="Search for a country..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full bg-gray-100 border-2 border-transparent rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500 transition-colors"
+                            />
+                        </div>
+
+                        {/* Results List */}
+                        <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                           {filteredCountries.length > 0 ? (
+                                filteredCountries.map(country => (
+                                    <ListItem key={country} text={country} />
+                                ))
+                           ) : (
+                                <p className="text-center text-gray-500 py-4">No countries found.</p>
+                           )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Rendering the App ---
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+    </script>
+
+</body>
+</html>
